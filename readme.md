@@ -3,6 +3,6 @@
 
 ```bash 
 
-php script.php input.csv
+php cli.php input.csv
 
 ```
