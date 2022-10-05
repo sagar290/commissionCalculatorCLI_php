@@ -3,6 +3,7 @@
 namespace Sagar290\CommissionCalc\Service;
 
 
+use Exception;
 use League\Csv\Reader;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Windwalker\Http\HttpClient;
@@ -26,9 +27,9 @@ class CommissionCalculator
     private $userTypePrivateCommission = 0.3;
     private $userTypeBusinessCommission = 0.5;
 
-    public function __construct(HttpClient $client)
+    public function __construct()
     {
-        $this->client = $client;
+        $this->client = new HttpClient();
     }
 
     /**
@@ -44,13 +45,23 @@ class CommissionCalculator
 
     private $depositCommission = 0.03;
 
-    public function loadData(string $string)
+    /**
+     * @param string $inputFile
+     * @return void
+     */
+    public function loadData(string $inputFile)
     {
-        $csv = Reader::createFromPath('./input.csv', 'r');
+        $csv = Reader::createFromPath($inputFile);
         $this->records = $csv->getRecords();
     }
 
-    public function calculateCommissions()
+
+    /**
+     * calculate commissions
+     * @return array
+     * @throws Exception
+     */
+    public function calculateCommissions(): array
     {
         $commissions = [];
         foreach ($this->records as $record) {
@@ -61,7 +72,14 @@ class CommissionCalculator
     }
 
 
-    public function convertCurrency($amount, $currencyType, $convertTo = 'EUR')
+    /**
+     * Convert currency to EUR
+     * @param $amount
+     * @param $currencyType
+     * @param string $convertTo
+     * @return float
+     */
+    public function convertCurrency($amount, $currencyType, string $convertTo = 'EUR'): float
     {
         if ($currencyType == $convertTo) {
             return $amount;
@@ -80,19 +98,23 @@ class CommissionCalculator
     }
 
 
-    public function calculate($data)
+    /**
+     * calculate commission
+     * @param $row
+     * @return float|int
+     * @throws Exception
+     */
+    public function calculate($row)
     {
 
-        if (!array_get($data, '1')) {
-            throw new \Exception('Invalid data');
+        if (!array_get($row, '1')) {
+            throw new Exception('Invalid data');
         }
 
-//        $this->setUserData($data);
-
-        $userType = array_get($data, '2');
-        $operationType = array_get($data, '3');
-        $amount = array_get($data, '4');
-        $currencyType = array_get($data, '5');
+        $userType = array_get($row, '2');
+        $operationType = array_get($row, '3');
+        $amount = array_get($row, '4');
+        $currencyType = array_get($row, '5');
 
         $conversionAmount = $this->convertCurrency($amount, $currencyType);
 
@@ -100,8 +122,7 @@ class CommissionCalculator
             return $this->depositCommission($conversionAmount);
         }
 
-        $userId = array_get($data, '1');
-        $date = array_get($data, '0');
+        $date = array_get($row, '0');
 
         $isFreeOfCharge = false;
         if (in_array(date('D', strtotime($date)), [
@@ -117,34 +138,7 @@ class CommissionCalculator
 
     }
 
-    public function getUsers(): array
-    {
-        return $this->users;
-    }
-
-    /**
-     * @param $data
-     * @return void
-     */
-    public function setUserData($data)
-    {
-        $userId = array_get($data, '1');
-        $date = array_get($data, '0');
-
-
-        if (!array_get($this->users, $userId)) {
-            $this->users[$userId] = [];
-        }
-
-        if (!array_get($this->users, "{$userId}.{$date}")) {
-            $this->users[$userId][$date] = 1;
-        }
-
-        $this->users[$userId][$date] += 1;
-    }
-
-
-    private function depositCommission($conversionAmount)
+    private function depositCommission($conversionAmount): float
     {
         return round((($conversionAmount * $this->depositCommission) / 100), 2);
     }
