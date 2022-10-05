@@ -1,0 +1,27 @@
+{
+    "name": "sagar290/commisioncalc",
+    "description": "Simple cli tools for calculating commission",
+    "autoload": {
+        "psr-4": {
+            "Sagar290\\CommissionCalc\\": "src/"
+        },
+        "files": [
+            "Helpers\\helper_functions.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Sagar",
+            "email": "sagar.dash290@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7",
+        "league/csv": "^9.8",
+        "symfony/console": "^5.4",
+        "symfony/http-client": "^5.4",
+        "windwalker/http": "^3.5",
+      "ext-json": "*"
+    }
+
+}
