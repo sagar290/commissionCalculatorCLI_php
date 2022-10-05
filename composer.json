@@ -9,6 +9,11 @@
             "Helpers\\helper_functions.php"
         ]
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Sagar290\\CommissionCalc\\Tests\\": "Tests/"
+        }
+    },
     "authors": [
         {
             "name": "Sagar Dash",
@@ -20,6 +25,8 @@
         "league/csv": "^9.8",
         "windwalker/http": "^3.5",
       "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
     }
-
 }
