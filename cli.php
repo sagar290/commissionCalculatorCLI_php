@@ -1,14 +1,12 @@
 <?php
 
-
-use League\Csv\Reader;
+use Sagar290\CommissionCalc\Service\CommissionCalculator;
 
 require __DIR__ . '/vendor/autoload.php';
 
+$class = new CommissionCalculator();
 
-$class = app(\Sagar290\CommissionCalc\Service\CommissionCalculator::class);
-
-$class->loadData('./input.csv');
+$class->loadData($argv[1]);
 
 $commissions = $class->calculateCommissions();
 
