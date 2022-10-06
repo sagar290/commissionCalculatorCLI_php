@@ -5,6 +5,7 @@ namespace Sagar290\CommissionCalc\Service;
 
 use Exception;
 use League\Csv\Reader;
+use Sagar290\CommissionCalc\Exception\InvalidDataException;
 use Windwalker\Http\HttpClient;
 
 class CommissionCalculator
@@ -106,8 +107,16 @@ class CommissionCalculator
     public function calculate($row)
     {
 
+        if (!is_array($row)) {
+            throw new InvalidDataException('Invalid data type, data type must be array');
+        }
+
         if (!array_get($row, '1')) {
-            throw new Exception('Invalid data');
+            throw new InvalidDataException('Invalid data');
+        }
+
+        if (count($row) !== 6) {
+            throw new InvalidDataException('Invalid data, data must be 6 columns');
         }
 
         $userType = array_get($row, '2');
