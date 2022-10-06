@@ -5,7 +5,6 @@ namespace Sagar290\CommissionCalc\Service;
 
 use Exception;
 use League\Csv\Reader;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Windwalker\Http\HttpClient;
 
 class CommissionCalculator
@@ -16,16 +15,16 @@ class CommissionCalculator
     private $records;
 
     /**
-     * @var HttpClientInterface
+     * @var HttpClient
      */
-    private $client;
+    private HttpClient $client;
     /**
      * @var mixed|null
      */
     private $rates;
-    private $freeOfChargeAmount = 1000;
-    private $userTypePrivateCommission = 0.3;
-    private $userTypeBusinessCommission = 0.5;
+    private int $freeOfChargeAmount = 1000;
+    private float $userTypePrivateCommission = 0.3;
+    private float $userTypeBusinessCommission = 0.5;
 
     public function __construct()
     {
@@ -138,12 +137,12 @@ class CommissionCalculator
 
     }
 
-    private function depositCommission($conversionAmount): float
+    public function depositCommission($conversionAmount): float
     {
         return round((($conversionAmount * $this->depositCommission) / 100), 2);
     }
 
-    private function withdrawCommission($conversionAmount, $userType, $isFreeOfCharge = false)
+    public function withdrawCommission($conversionAmount, $userType, $isFreeOfCharge = false)
     {
         if ($userType == 'private') {
             if ($isFreeOfCharge) {
