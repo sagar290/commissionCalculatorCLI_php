@@ -2,7 +2,9 @@
 
 namespace Sagar290\CommissionCalc\Tests\Unit;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
+use Sagar290\CommissionCalc\Exception\InvalidDataException;
 use Sagar290\CommissionCalc\Service\CommissionCalculator;
 
 class CalculatorTest extends TestCase
@@ -67,7 +69,7 @@ class CalculatorTest extends TestCase
 
     /**
      * @test
-     * @throws \Exception
+     * @throws Exception
      */
     public function is_valid_calculation()
     {
@@ -94,5 +96,42 @@ class CalculatorTest extends TestCase
             $this->assertEquals($item['expected'], $this->calculator->calculate($item['data']), "commission is not correct in index {$key}");
         }
     }
-    
+
+    // Exception Tests
+
+
+    /**
+     * @test
+     * @throws Exception
+     */
+    public function is_valid_data_format_in_calculate_params_for_empty_array()
+    {
+        $this->expectException(InvalidDataException::class);
+        $this->calculator->calculate([]);
+
+    }
+
+
+    /**
+     * @test
+     * @throws Exception
+     */
+    public function is_valid_data_format_in_calculate_params_for_corrupted_array()
+    {
+        $this->expectException(InvalidDataException::class);
+        $this->calculator->calculate(["random", "ss", "ass"]);
+
+    }
+
+    /**
+     * @test
+     * @throws Exception
+     */
+    public function is_valid_data_format_in_calculate_params_for_string()
+    {
+        $this->expectException(InvalidDataException::class);
+        $this->calculator->calculate("random");
+
+    }
+
 }
